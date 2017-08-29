@@ -1,0 +1,21 @@
+#!/bin/bash
+
+repos=(
+    kubernetes/kubernetes
+    kubernetes/community
+    kubernetes/features
+)
+
+for ((i=0; i<${#repos[@]}; i++)) ; do
+    repos[$i]="--repos=${repos[$i]}"
+done
+
+[ -z "$GH_USER" ] && echo "Need to set GH_USER" && exit 1;
+[ -z "$GH_TOKEN" ] && echo "Need to set GH_TOKEN" && exit 1;
+
+./ghstats.py \
+    --request-user=$GH_USER \
+    --request-token=$GH_TOKEN \
+    --user=$GH_USER \
+    ${repos[@]}
+
