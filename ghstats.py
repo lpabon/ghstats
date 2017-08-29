@@ -98,7 +98,7 @@ class GHStats(object):
 	def author(self):
 		if self.verbose:
 			print("--> Author:")
-		query = self.default_q + '+author:'+self.user
+		query = self.default_q + '+is:pr+author:'+self.user
 		params = 'q='+urllib.parse.quote(query, safe='+:')
 		return self.enumerate(params)
 
