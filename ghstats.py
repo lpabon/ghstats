@@ -46,6 +46,16 @@ class GHStats(object):
 
 		self.default_q = self.default_q+'+repo:'+repo
 
+	def do(self, fnc_r, *args, **kwargs):
+		while True:
+			r = fnc_r(*args, **kwargs)
+			if r.headers['X-RateLimit-Remaining'] != '0':
+				return r
+			else:
+				reset_time = int(r.headers['X-RateLimit-Reset'])
+				print ("No more requests allowed, waiting until %s for more requests" % (time.ctime(reset_time)))
+				time.sleep(reset_time-time.time()+5)
+
 	def num_pages_and_url(self, r):
 		if 'Link' not in r.headers:
 			return 1, r.url
@@ -64,24 +74,10 @@ class GHStats(object):
 		else:
 			auth = None
 
-		while True:
-			r = requests.head(url, auth=auth)
-			if r.headers['X-RateLimit-Remaining'] != '0':
-				break
-			else:
-				reset_time = int(r.headers['X-RateLimit-Reset'])
-				print ("No more requests allowed, waiting until %s for more requests" % (time.ctime(reset_time)))
-				time.sleep(reset_time-time.time()+5)
-
+		r = self.do(requests.head, url, auth=auth)
 		n, last = self.num_pages_and_url(r)
-		while True:
-			r = requests.get(last, auth=auth)
-			if r.headers['X-RateLimit-Remaining'] != '0':
-				break
-			else:
-				reset_time = int(r.headers['X-RateLimit-Reset'])
-				print ("No more requests allowed, waiting until %s for more requests" % (time.ctime(reset_time)))
-				time.sleep(reset_time-time.time()+5)
+
+		r = self.do(requests.get, last, auth=auth)
 		body = r.json()
 		if 'items' in body:
 			#if self.verbose:
