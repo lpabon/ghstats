@@ -64,14 +64,24 @@ class GHStats(object):
 		else:
 			auth = None
 
-		r = requests.head(url, auth=auth)
+		while True:
+			r = requests.head(url, auth=auth)
+			if r.headers['X-RateLimit-Remaining'] != '0':
+				break
+			else:
+				reset_time = int(r.headers['X-RateLimit-Reset'])
+				print ("No more requests allowed, waiting until %s for more requests" % (time.ctime(reset_time)))
+				time.sleep(reset_time-time.time()+5)
+
 		n, last = self.num_pages_and_url(r)
-
-		if r.headers['X-RateLimit-Remaining'] == '0':
-			print ("No more requests allowed, please wait until %s for more requests" % (time.ctime(int(r.headers['X-RateLimit-Reset']))))
-			sys.exit(1)
-
-		r = requests.get(last, auth=auth)
+		while True:
+			r = requests.get(last, auth=auth)
+			if r.headers['X-RateLimit-Remaining'] != '0':
+				break
+			else:
+				reset_time = int(r.headers['X-RateLimit-Reset'])
+				print ("No more requests allowed, waiting until %s for more requests" % (time.ctime(reset_time)))
+				time.sleep(reset_time-time.time()+5)
 		body = r.json()
 		if 'items' in body:
 			#if self.verbose:
