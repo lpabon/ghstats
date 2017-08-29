@@ -84,7 +84,7 @@ class GHStats(object):
 	def reviewed_authored(self):
 		if self.verbose:
 			print("--> Reviewed Authored:")
-		query = self.default_q + '+commenter:'+self.user+'+author:'+self.user
+		query = self.default_q + '+commenter:'+self.user+'+is:pr+author:'+self.user
 		params = 'q='+urllib.parse.quote(query, safe='+:')
 		return self.enumerate(params)
 
