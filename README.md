@@ -1,5 +1,9 @@
 # ghstats
-GitHub Stats utility program. Shows number of reviews and authored PRs from a user per repo
+GitHub Stats utility program. Shows number of reviews and authored PRs from a user per repo.
+
+You may need a [GitHub Token](https://github.com/blog/1509-personal-api-tokens).
+
+### Example
 
 ```
 $ ./ghstats.py -h
