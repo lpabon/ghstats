@@ -113,8 +113,8 @@ class GHStats(object):
 parser = argparse.ArgumentParser(description='GitHub Stats utility program. Shows number of reviews and authored PRs from a user per repo', usage=USAGE)
 parser.add_argument('--request-user', dest="request_user", default='', help='Owner of request token')
 parser.add_argument('--request-token', dest="request_token", default='', help='Api GitHub Token')
-parser.add_argument('--user', default='', help='Get stats from Github for this user')
-parser.add_argument('--repos', action='append', default=[], help='Use multiple times to specify multiple repos. Ex: kubernetes/kubernetes')
+parser.add_argument('--user', action='append', default=[], help='Get stats from Github for this user. Use multiple times to specify multiple users.')
+parser.add_argument('--repos', action='append', default=[], help='Github project and repo. Use multiple times to specify multiple repos. Ex: kubernetes/kubernetes')
 parser.add_argument('--date-from', dest="date_from", default='', help='Start on this date of format YYYY-MM-DD. If date-to is not provided, stats will be returned from the date provided to today')
 parser.add_argument('--date-to', dest="date_to", default='', help='End on this date of format YYYY-MM-DD. If date-from is not provided, then stats will be returned from until the date provided')
 parser.add_argument('-v', '--verbose', dest='verbose', action='store_true', default=False, help='Verbose')
@@ -128,12 +128,21 @@ if len(args.repos) == 0:
 	sys.exit(1)
 
 
-for repo in args.repos:
-	x = GHStats(args.user,
-		repo,
-		date_from=args.date_from,
-        date_to=args.date_to,
-		request_user=args.request_user,
-		request_token=args.request_token,
-		verbose=args.verbose)
-	print("%s: Reviews(%d) Author(%d)" % (repo, x.reviews(), x.author()))
+total_reviews = 0
+total_author = 0
+for user in args.user:
+	for repo in args.repos:
+		x = GHStats(user,
+			repo,
+			date_from=args.date_from,
+	        date_to=args.date_to,
+			request_user=args.request_user,
+			request_token=args.request_token,
+			verbose=args.verbose)
+		reviews = x.reviews()
+		authored = x.author()
+		total_reviews += reviews
+		total_author += authored
+		print("%s %s: Reviews(%d) Author(%d)" % (user, repo, reviews, authored))
+
+print("Total: Reviews(%d) Author(%d)" % (total_reviews, total_author))
