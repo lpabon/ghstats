@@ -43,7 +43,8 @@ $ ./ghstats.py --request-user=$APIUSER \
 	--repos=coreos/quartermaster \
 	--date-from=2016-01-01 \
 	--date-to=2017-04-01
-heketi/heketi: Reviews(155) Author(207)
-coreos/quartermaster: Reviews(7) Author(61)
+lpabon heketi/heketi: Reviews(186) Author(132)
+lpabon coreos/quartermaster: Reviews(11) Author(45)
+Total: Reviews(197) Author(177)
 ```
 
